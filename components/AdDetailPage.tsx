@@ -59,32 +59,32 @@ const AdDetailPage: React.FC<AdDetailPageProps> = ({ adId, onNavigate, onBook })
     <div className="bg-[#FAFAFA] min-h-screen font-sans animate-fade-in-up selection:bg-pink-100 selection:text-pink-900 pt-24">
       
       {/* Breadcrumb - Sticky below Navbar */}
-      <div className="sticky top-20 z-30 bg-[#FAFAFA]/95 backdrop-blur-sm border-b border-gray-200 px-6 md:px-12 py-4 transition-all">
+      <div className="sticky top-20 z-30 bg-[#FAFAFA]/95 backdrop-blur-sm border-b border-gray-200 px-6 md:px-12 py-3 md:py-4 transition-all">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+            <div className="flex items-center gap-2 text-xs md:text-sm font-medium text-slate-500 truncate">
                 <span className="cursor-pointer hover:text-slate-900" onClick={() => onNavigate('home')}>Home</span>
                 <span>{'>'}</span>
                 <span className="cursor-pointer hover:text-slate-900" onClick={() => onNavigate('zee5')}>Digital Ads</span>
-                <span>{'>'}</span>
-                <span className="text-slate-900 font-bold">{ad.title}</span>
+                <span className="hidden md:inline">{'>'}</span>
+                <span className="text-slate-900 font-bold hidden md:inline">{ad.title}</span>
             </div>
             <button 
                 onClick={() => onNavigate('zee5')}
-                className="flex items-center gap-1 text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors"
+                className="flex items-center gap-1 text-xs md:text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors shrink-0"
             >
                 <ArrowLeft size={16} /> Back
             </button>
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-8 md:py-12">
         
         {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8 tracking-tight">
+        <h1 className="text-2xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-8 tracking-tight">
             {ad.title} on {siteData.adPlatform.platformName}
         </h1>
 
-        <div className="grid lg:grid-cols-12 gap-12">
+        <div className="grid lg:grid-cols-12 gap-8 md:gap-12">
           
           {/* LEFT CONTENT COLUMN */}
           <div className="lg:col-span-8">
@@ -134,13 +134,13 @@ const AdDetailPage: React.FC<AdDetailPageProps> = ({ adId, onNavigate, onBook })
             </div>
 
             {/* Stats Row (Figma Style) */}
-            <div className="bg-white rounded-2xl px-8 py-6 border border-slate-200 flex flex-wrap gap-x-16 gap-y-6 mb-8 items-center shadow-sm">
+            <div className="bg-white rounded-2xl px-6 py-4 md:px-8 md:py-6 border border-slate-200 flex flex-wrap gap-x-8 md:gap-x-16 gap-y-4 md:gap-y-6 mb-8 items-center shadow-sm">
                 {ad.stats && Object.entries(ad.stats).map(([key, value]) => (
                     <div key={key} className="flex flex-col">
                         <span className="text-[#D946EF] text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1">
                             {getStatLabel(key)}
                         </span>
-                        <span className="text-lg md:text-xl font-medium text-slate-900 leading-none">
+                        <span className="text-base md:text-xl font-medium text-slate-900 leading-none">
                             {value}
                         </span>
                     </div>
@@ -148,32 +148,32 @@ const AdDetailPage: React.FC<AdDetailPageProps> = ({ adId, onNavigate, onBook })
             </div>
 
             {/* Description */}
-            <div className="mb-16">
-                <p className="text-slate-700 text-lg leading-relaxed font-normal">
+            <div className="mb-12 md:mb-16">
+                <p className="text-slate-700 text-base md:text-lg leading-relaxed font-normal">
                     {ad.description}
                 </p>
             </div>
 
             {/* Execution Details Header */}
-            <h2 className="text-3xl font-bold text-slate-900 mb-8">Ad Execution Details</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6 md:mb-8">Ad Execution Details</h2>
 
             {/* Execution Cards Grid */}
-            <div className="grid md:grid-cols-2 gap-6 mb-16">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-12 md:mb-16">
                 {ad.executionDetails && ad.executionDetails.map((section, idx) => (
                     <div 
                         key={idx} 
                         className="rounded-xl overflow-hidden border border-pink-100 bg-white shadow-sm flex flex-col h-full"
                     >
                         {/* Pink Header */}
-                        <div className="bg-[#FFE4F2] px-6 py-4 border-b border-pink-100">
+                        <div className="bg-[#FFE4F2] px-6 py-3 md:py-4 border-b border-pink-100">
                             <h3 className="text-[#BE185D] font-bold uppercase text-xs tracking-widest">
                                 {section.title}
                             </h3>
                         </div>
                         
                         {/* Body */}
-                        <div className="p-6 flex-grow">
-                            <div className="space-y-5">
+                        <div className="p-4 md:p-6 flex-grow">
+                            <div className="space-y-4 md:space-y-5">
                                 {section.fields.map((field, fIdx) => (
                                     <div key={fIdx}>
                                         <span className="block text-[10px] font-bold text-[#D946EF] uppercase mb-1 tracking-wide">
@@ -194,19 +194,19 @@ const AdDetailPage: React.FC<AdDetailPageProps> = ({ adId, onNavigate, onBook })
             </div>
 
             {/* Expert Guidance Banner */}
-            <div className="bg-[#0056D2] rounded-3xl overflow-hidden relative mb-20 shadow-2xl group">
+            <div className="bg-[#0056D2] rounded-3xl overflow-hidden relative mb-16 md:mb-20 shadow-2xl group">
                  <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                  
-                 <div className="px-8 py-12 md:px-12 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                     <div className="max-w-lg">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">Looking for Expert Guidance?</h2>
-                        <p className="text-blue-100 text-base md:text-lg leading-relaxed font-light">
+                 <div className="px-6 py-8 md:px-12 md:py-12 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+                     <div className="max-w-lg text-center md:text-left">
+                        <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4 leading-tight">Looking for Expert Guidance?</h2>
+                        <p className="text-blue-100 text-sm md:text-lg leading-relaxed font-light">
                             Schedule a consultation with our media planner to seamlessly strategize and place your next promotion.
                         </p>
                      </div>
                      <button 
                         onClick={onBook}
-                        className="bg-[#D946EF] hover:bg-pink-500 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 whitespace-nowrap uppercase text-sm tracking-widest"
+                        className="bg-[#D946EF] hover:bg-pink-500 text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 whitespace-nowrap uppercase text-xs md:text-sm tracking-widest"
                      >
                         Learn More
                      </button>
@@ -222,21 +222,21 @@ const AdDetailPage: React.FC<AdDetailPageProps> = ({ adId, onNavigate, onBook })
             </div>
 
             {/* Long Form Content */}
-            <div className="space-y-16 pb-12 max-w-4xl">
+            <div className="space-y-12 md:space-y-16 pb-12 max-w-4xl">
                  {ad.contentSections && ad.contentSections.map((section, idx) => (
                      <div key={idx}>
-                         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-8 tracking-tight">{section.title}</h2>
+                         <h2 className="text-2xl md:text-4xl font-bold text-slate-900 mb-6 md:mb-8 tracking-tight">{section.title}</h2>
                          {Array.isArray(section.content) ? (
-                             <ul className="space-y-4 pl-2">
+                             <ul className="space-y-3 md:space-y-4 pl-2">
                                  {section.content.map((item, i) => (
-                                     <li key={i} className="flex gap-4 text-slate-700 leading-relaxed text-lg items-start">
+                                     <li key={i} className="flex gap-3 md:gap-4 text-slate-700 leading-relaxed text-base md:text-lg items-start">
                                          <span className="w-1.5 h-1.5 rounded-full bg-slate-900 mt-2.5 flex-shrink-0"></span>
                                          <span>{item}</span>
                                      </li>
                                  ))}
                              </ul>
                          ) : (
-                             <p className="text-slate-700 leading-loose text-lg whitespace-pre-line">{section.content}</p>
+                             <p className="text-slate-700 leading-loose text-base md:text-lg whitespace-pre-line">{section.content}</p>
                          )}
                      </div>
                  ))}
@@ -250,19 +250,19 @@ const AdDetailPage: React.FC<AdDetailPageProps> = ({ adId, onNavigate, onBook })
                  
                  {/* Pricing Card */}
                  <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transform transition-all hover:shadow-2xl">
-                      <div className="p-6 md:p-8">
+                      <div className="p-5 md:p-8">
                           
                           <div className="flex gap-4 mb-6">
-                              <div className="flex-1 border border-pink-100 bg-white rounded-xl p-4 flex flex-col justify-center items-center text-center">
+                              <div className="flex-1 border border-pink-100 bg-white rounded-xl p-3 md:p-4 flex flex-col justify-center items-center text-center">
                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Original Rate</span>
-                                   <span className="text-slate-400 line-through text-lg font-medium">{ad.pricing?.original}</span>
+                                   <span className="text-slate-400 line-through text-base md:text-lg font-medium">{ad.pricing?.original}</span>
                                    <span className="text-[9px] text-slate-400 mt-0.5">/ Per Day</span>
                               </div>
                               
-                              <div className="flex-1 bg-[#0D9488] rounded-xl p-4 flex flex-col justify-center items-center text-center shadow-lg relative overflow-hidden">
+                              <div className="flex-1 bg-[#0D9488] rounded-xl p-3 md:p-4 flex flex-col justify-center items-center text-center shadow-lg relative overflow-hidden">
                                    <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity"></div>
                                    <span className="text-[10px] text-white/90 font-bold uppercase tracking-wider mb-1">Our Exclusive Offer</span>
-                                   <span className="text-xl md:text-2xl font-bold text-white tracking-tight">{ad.pricing?.discounted || ad.price}</span>
+                                   <span className="text-lg md:text-2xl font-bold text-white tracking-tight">{ad.pricing?.discounted || ad.price}</span>
                                    <span className="text-[9px] text-white/80 mt-0.5">/ Per Day</span>
                               </div>
                           </div>
@@ -270,7 +270,7 @@ const AdDetailPage: React.FC<AdDetailPageProps> = ({ adId, onNavigate, onBook })
                           <div className="flex justify-between items-center border border-slate-200 rounded-xl p-4 mb-8 bg-slate-50">
                               <div className="flex flex-col">
                                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Min Billing</span>
-                                  <span className="font-bold text-slate-900 text-lg">{ad.pricing?.minBilling}</span>
+                                  <span className="font-bold text-slate-900 text-base md:text-lg">{ad.pricing?.minBilling}</span>
                               </div>
                               <Info size={18} className="text-slate-400" />
                           </div>

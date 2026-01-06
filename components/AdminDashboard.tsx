@@ -97,8 +97,6 @@ const Sidebar = ({ activeTab, setActiveTab, onNavigate, handleSave }: any) => {
     );
 };
 
-// --- Editor Modal (Same as before) ---
-// (Keeping EditorModal code collapsed as no logic changes there except props if needed, but for XML simplicity assuming same)
 const EditorModal = ({ 
     editingCard, setEditingCard, saveCardEditor, 
     updateEditCardField, 
@@ -109,7 +107,6 @@ const EditorModal = ({
 }: any) => {
     if (!editingCard) return null;
 
-    // Use safe accessors with fallbacks to prevent crashes on older data
     const safeImages = editingCard.images || [];
     const safeExecDetails = editingCard.executionDetails || [];
     const safeContentSections = editingCard.contentSections || [];
@@ -135,7 +132,6 @@ const EditorModal = ({
                 <div className="flex-1 overflow-y-auto p-8">
                     <div className="grid grid-cols-12 gap-8 max-w-[1600px] mx-auto">
                         <div className="col-span-12 xl:col-span-4 space-y-6">
-                            {/* Core Info */}
                             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                                 <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Core Information</h4>
                                 <div className="space-y-4">
@@ -150,7 +146,6 @@ const EditorModal = ({
                                 </div>
                             </div>
 
-                             {/* Pricing Details */}
                             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                                 <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Detailed Pricing</h4>
                                 <div className="space-y-4">
@@ -181,7 +176,6 @@ const EditorModal = ({
                                 </div>
                             </div>
                             
-                            {/* Gallery */}
                             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                                 <div className="flex justify-between items-center mb-4">
                                     <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Image Gallery</h4>
@@ -202,8 +196,6 @@ const EditorModal = ({
                         </div>
 
                         <div className="col-span-12 xl:col-span-8 space-y-6">
-                            
-                             {/* Campaign Stats */}
                             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                                 <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Stats (Displayed in Detail Page)</h4>
                                 <div className="grid grid-cols-2 gap-6">
@@ -242,7 +234,6 @@ const EditorModal = ({
                                 </div>
                             </div>
                             
-                            {/* Execution Details (Specs) */}
                             <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
                                 <div className="flex justify-between items-center mb-6">
                                     <h4 className="text-lg font-bold text-slate-900">Technical Specifications</h4>
@@ -272,7 +263,6 @@ const EditorModal = ({
                                 </div>
                             </div>
 
-                            {/* Long Form Content */}
                             <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
                                 <div className="flex justify-between items-center mb-6">
                                     <h4 className="text-lg font-bold text-slate-900">Detailed Content Sections</h4>
@@ -394,13 +384,11 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
 
   // --- Helper Functions ---
   
-  // 1. General Save
   const handleSave = () => {
     updateSiteData(formData);
     addToast('Site content updated successfully!', 'success');
   };
 
-  // 2. Section Updaters
   const updateSection = (section: keyof SiteData, field: string, value: any) => {
     setFormData(prev => ({ ...prev, [section]: { ...prev[section] as any, [field]: value } }));
   };
@@ -418,7 +406,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       }));
   };
 
-  // 3. Nested Stats Updater
   const updateStat = (statKey: 'stat1' | 'stat2' | 'stat3', field: 'val' | 'label', value: string) => {
       setFormData(prev => ({
           ...prev,
@@ -429,14 +416,12 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       }));
   };
 
-  // 4. Service Updater
   const updateService = (idx: number, field: keyof ServiceItem, value: string) => {
       const newServices = [...formData.services.topServices];
       newServices[idx] = { ...newServices[idx], [field]: value };
       setFormData(prev => ({ ...prev, services: { ...prev.services, topServices: newServices }}));
   };
 
-  // 5. Chat Handlers
   const handleSendAdminMessage = async (e: React.FormEvent) => {
       e.preventDefault();
       if (!selectedChatId || !adminReply.trim()) return;
@@ -453,7 +438,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       }
   };
 
-  // 6. Lead Handlers
   const handleUpdateConsultationStatus = async (leadId: string, newStatus: string) => {
       await db.collection('consultations').doc(leadId).update({ status: newStatus });
       addToast(`Lead marked as ${newStatus}`, "info");
@@ -465,13 +449,11 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       }
   };
 
-  // 7. Order Handlers
   const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
       await db.collection('orders').doc(orderId).update({ status: newStatus });
       addToast(`Order status updated to ${newStatus}`, "info");
   };
 
-  // 8. Ad Card CRUD
   const addAdCard = () => {
       const newCard: AdCardData = {
         id: Date.now().toString(),
@@ -497,7 +479,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       addToast("Card details updated locally", "success");
   };
 
-  // 9. Deep Editor Helper Functions (IMPROVED IMMUTABILITY)
   const updateEditCardField = (f: keyof AdCardData, v: any) => setEditingCard(p => p ? ({ ...p, [f]: v }) : null);
   
   const updateGalleryImage = (i: number, v: string) => { 
@@ -575,6 +556,22 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       return {...p, contentSections: n}; 
   });
 
+  // Utility to calculate order total from items if field is missing
+  const getOrderTotal = (order: Order) => {
+      if (order.totalAmount && order.totalAmount !== 'Calculating...') return order.totalAmount;
+      if (!order.items || order.items.length === 0) return '₹ 0';
+      
+      const total = order.items.reduce((acc, item) => {
+          const p = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+          return acc + p;
+      }, 0);
+      
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+      }).format(total);
+  };
 
   if (!isAuthenticated) return null;
 
@@ -595,13 +592,9 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
              </div>
         )}
 
-        {/* --- DYNAMIC TAB CONTENT --- */}
         <div className="flex-1 overflow-y-auto pr-2 pb-20">
-            {/* ... (Existing Tabs) ... */}
-            {/* 1. MESSAGES (Live Chat) */}
             {activeTab === 'messages' && (
                 <div className="flex h-full bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                    {/* Chat List */}
                     <div className="w-80 border-r border-gray-200 bg-gray-50 flex flex-col">
                         <div className="p-4 border-b font-bold text-gray-500 uppercase text-xs tracking-wider">Active Sessions</div>
                         <div className="flex-1 overflow-y-auto">
@@ -618,7 +611,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                             ))}
                         </div>
                     </div>
-                    {/* Chat Window */}
                     <div className="flex-1 flex flex-col bg-white">
                         {selectedChatId ? (
                             <>
@@ -651,7 +643,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                 </div>
             )}
 
-            {/* 2. LEADS (Consultations) */}
             {activeTab === 'consultations' && (
                 <div className="grid lg:grid-cols-2 gap-6">
                     {consultations.length === 0 && <p className="text-gray-400">No leads found.</p>}
@@ -677,23 +668,25 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                 </div>
             )}
 
-            {/* 3. ORDERS */}
             {activeTab === 'orders' && (
                 <div className="space-y-4">
+                    {allOrders.length === 0 && !permissionError && <p className="text-gray-400">No orders found.</p>}
                     {allOrders.map(order => (
                         <div key={order.id} className="bg-white p-6 rounded-xl border shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
                             <div>
-                                <p className="font-bold text-lg">{order.userName}</p>
-                                <p className="text-sm text-gray-500">{order.userEmail} • {order.items.length} Items</p>
+                                <p className="font-bold text-lg">{order.userName || 'Unknown User'}</p>
+                                <p className="text-sm text-gray-500">{order.userEmail || 'No Email'} • {order.items?.length || 0} Items</p>
                                 <p className="text-xs text-gray-400 mt-1">ID: {order.id}</p>
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="text-right">
-                                    <p className="font-bold text-slate-900">{order.totalAmount}</p>
-                                    <p className="text-xs text-gray-400">{new Date(order.dateOrdered?.seconds * 1000).toLocaleDateString()}</p>
+                                    <p className="font-bold text-slate-900">{getOrderTotal(order)}</p>
+                                    <p className="text-xs text-gray-400">
+                                        {order.dateOrdered?.seconds ? new Date(order.dateOrdered.seconds * 1000).toLocaleDateString() : 'Date N/A'}
+                                    </p>
                                 </div>
                                 <select 
-                                    value={order.status} 
+                                    value={order.status || 'Pending'} 
                                     onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)} 
                                     className="border p-2 rounded-lg text-sm bg-gray-50 font-medium"
                                 >
@@ -705,7 +698,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                 </div>
             )}
 
-            {/* 4. GENERAL (Brand) */}
             {activeTab === 'general' && (
                  <div className="bg-white p-8 rounded-2xl border max-w-xl space-y-6 shadow-sm">
                      <h3 className="font-bold text-lg border-b pb-4 mb-4">Brand Identity</h3>
@@ -720,7 +712,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                  </div>
             )}
 
-            {/* 5. HERO */}
             {activeTab === 'hero' && (
                  <div className="bg-white p-8 rounded-2xl border max-w-2xl space-y-6 shadow-sm">
                      <div className="grid gap-6">
@@ -745,7 +736,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                  </div>
             )}
 
-            {/* 6. SERVICES */}
             {activeTab === 'services' && (
                 <div className="space-y-6">
                     <h3 className="font-bold text-xl">Top Services</h3>
@@ -761,7 +751,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                 </div>
             )}
             
-            {/* 7. STATS */}
             {activeTab === 'stats' && (
                  <div className="bg-white p-8 rounded-2xl border max-w-2xl space-y-8 shadow-sm">
                      <div>
@@ -786,7 +775,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                  </div>
             )}
             
-            {/* 8. CONTACT */}
             {activeTab === 'contact' && (
                  <div className="bg-white p-8 rounded-2xl border max-w-xl space-y-6 shadow-sm">
                      {['address', 'phone', 'email', 'instagram', 'linkedin'].map(field => (
@@ -802,7 +790,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                  </div>
             )}
 
-            {/* 9. ADS PLATFORM */}
             {activeTab === 'adPlatform' && (
                 <div className="space-y-6">
                     <div className="flex justify-between items-center">
@@ -810,7 +797,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                          <button onClick={addAdCard} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-blue-700 shadow-md"><Plus size={16}/> Add Product</button>
                     </div>
                     
-                    {/* Header Stats Editor */}
                     <div className="bg-white p-6 rounded-2xl border shadow-sm mb-8">
                         <h4 className="text-sm font-bold text-gray-400 uppercase mb-4">Hero Section Stats & Branding</h4>
                         <div className="grid grid-cols-2 gap-4">
@@ -840,14 +826,12 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                         </div>
                     </div>
 
-                    {/* Intro Editor */}
                     <div className="bg-white p-6 rounded-2xl border shadow-sm mb-8">
                          <h4 className="text-sm font-bold text-gray-400 uppercase mb-4">Platform Header Info</h4>
                          <input value={formData.adPlatform.platformName} onChange={e => { const d = {...formData.adPlatform, platformName: e.target.value}; setFormData({...formData, adPlatform: d})}} className="w-full border p-2 mb-2 rounded" placeholder="Platform Name" />
                          <textarea value={formData.adPlatform.intro.p1} onChange={e => { const d = {...formData.adPlatform, intro: {...formData.adPlatform.intro, p1: e.target.value}}; setFormData({...formData, adPlatform: d})}} className="w-full border p-2 rounded text-sm" placeholder="Intro Text" rows={2}/>
                     </div>
 
-                    {/* Cards Grid */}
                     <div className="grid lg:grid-cols-2 gap-4">
                         {formData.adPlatform.cards.map(card => (
                             <div key={card.id} className="bg-white p-4 rounded-xl border flex justify-between items-center hover:shadow-md transition-shadow">

@@ -33,7 +33,6 @@ const UserPanel: React.FC<UserPanelProps> = ({ onNavigate }) => {
     else setFormData(userProfile);
   }, [currentUser, userProfile, onNavigate]);
 
-  // --- Chat Logic ---
   useEffect(() => {
     if (!currentUser) return;
     const unsubscribe = db.collection('chats').doc(currentUser.uid).collection('messages').orderBy('createdAt', 'asc').onSnapshot(
@@ -63,7 +62,6 @@ const UserPanel: React.FC<UserPanelProps> = ({ onNavigate }) => {
     } catch (err) { addToast("Failed to send message", "error"); }
   };
 
-  // --- Orders Logic ---
   useEffect(() => {
       if(!currentUser) return;
       const unsubscribe = db.collection('orders').where('userId', '==', currentUser.uid).onSnapshot(
@@ -84,9 +82,7 @@ const UserPanel: React.FC<UserPanelProps> = ({ onNavigate }) => {
       }
   };
 
-  // Calculate estimated total for display
   const cartTotalDisplay = cart.reduce((acc, item) => {
-     // Basic helper to strip non-digits to show an estimate before checkout
      const price = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
      return acc + price;
   }, 0);
@@ -101,6 +97,22 @@ const UserPanel: React.FC<UserPanelProps> = ({ onNavigate }) => {
       } catch (e) {
           addToast("Failed to place order", "error");
       }
+  };
+
+  const getOrderTotal = (order: Order) => {
+    if (order.totalAmount && order.totalAmount !== 'Calculating...') return order.totalAmount;
+    if (!order.items || order.items.length === 0) return '₹ 0';
+    
+    const total = order.items.reduce((acc, item) => {
+        const p = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+        return acc + p;
+    }, 0);
+    
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(total);
   };
 
   const SidebarItem = ({ id, icon: Icon, label, count }: any) => (
@@ -175,7 +187,7 @@ const UserPanel: React.FC<UserPanelProps> = ({ onNavigate }) => {
                              ))}
                           </div>
                           <div className="pt-4 border-t border-gray-100 flex justify-end">
-                              <p className="font-bold text-slate-900">Total: {order.totalAmount}</p>
+                              <p className="font-bold text-slate-900">Total: {getOrderTotal(order)}</p>
                           </div>
                       </div>
                   ))}

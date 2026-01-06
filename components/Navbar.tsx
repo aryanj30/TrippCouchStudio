@@ -48,7 +48,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, onContactClick
             <img 
               src="assets/logo.png" 
               alt={`${siteData.brand.line1} ${siteData.brand.line2}`} 
-              className="h-10 md:h-12 w-auto object-contain"
+              className="h-8 md:h-12 w-auto object-contain"
             />
           </div>
 
@@ -114,17 +114,19 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, onContactClick
 
       {/* Mobile Menu Overlay */}
       <div className={`fixed inset-0 bg-white z-40 transition-transform duration-500 ease-in-out md:hidden ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
-        <div className="flex flex-col h-full pt-32 px-8 gap-6">
-            <a href="#" onClick={(e) => handleNav('home', e)} className="text-4xl font-display font-bold text-slate-900">Home</a>
-            <a href="#" onClick={(e) => handleNav('about', e)} className="text-4xl font-display font-bold text-slate-900">About</a>
-            <a href="#" onClick={(e) => handleNav('zee5', e)} className="text-4xl font-display font-bold text-slate-900">Ads Platform</a>
+        <div className="flex flex-col h-full pt-28 px-6 gap-6">
+            <a href="#" onClick={(e) => handleNav('home', e)} className="text-lg font-display font-bold text-slate-900 border-b border-slate-100 pb-4">Home</a>
+            <a href="#" onClick={(e) => handleNav('about', e)} className="text-lg font-display font-bold text-slate-900 border-b border-slate-100 pb-4">About</a>
+            <a href="#" onClick={(e) => handleNav('zee5', e)} className="text-lg font-display font-bold text-slate-900 border-b border-slate-100 pb-4">Ads Platform</a>
             
-            <div className="h-px bg-slate-100 w-full my-4"></div>
-            
-            <button onClick={() => { setIsOpen(false); onContactClick(); }} className="text-2xl font-bold text-primary text-left">Start Project</button>
-            <button onClick={(e) => handleNav(isAuthenticated ? 'dashboard' : 'login', e)} className="text-lg font-medium text-slate-500 text-left mt-auto mb-12">
-               {isAuthenticated ? 'My Dashboard' : 'Client Login'}
-            </button>
+            <div className="mt-auto mb-10 space-y-4">
+              <button onClick={() => { setIsOpen(false); onContactClick(); }} className="w-full bg-primary text-white py-3 rounded-xl font-bold text-base flex justify-center items-center gap-2">
+                Start Project <ArrowUpRight size={18} />
+              </button>
+              <button onClick={(e) => handleNav(isAuthenticated ? 'dashboard' : 'login', e)} className="w-full bg-slate-100 text-slate-700 py-3 rounded-xl font-bold text-base">
+                {isAuthenticated ? 'My Dashboard' : 'Client Login'}
+              </button>
+            </div>
         </div>
       </div>
     </>
