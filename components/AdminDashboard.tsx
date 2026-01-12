@@ -11,7 +11,7 @@ import {
   Phone, Settings, ChevronRight, X, Edit3, List, Type, 
   MessageSquare, Search, Send, User, ShoppingBag, 
   ChevronDown, ChevronUp, Box, CheckCircle, Clock, AlertCircle,
-  Users, Calendar, Mail
+  Users, Calendar, Mail, Copy
 } from 'lucide-react';
 import { 
   SiteData, AdCardData, ServiceItem, Order, 
@@ -466,6 +466,17 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       setFormData(prev => ({ ...prev, adPlatform: { ...prev.adPlatform, cards: [newCard, ...prev.adPlatform.cards] } }));
       setEditingCard(newCard);
   };
+
+  const copyAdCard = (card: AdCardData) => {
+      const newCard: AdCardData = {
+          ...card,
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+          title: `${card.title} (Copy)`
+      };
+      setFormData(prev => ({ ...prev, adPlatform: { ...prev.adPlatform, cards: [newCard, ...prev.adPlatform.cards] } }));
+      addToast(`Card "${card.title}" duplicated! Save to publish.`, "success");
+  };
+
   const deleteAdCard = (id: string) => {
       if(window.confirm("Delete?")) {
         setFormData(prev => ({ ...prev, adPlatform: { ...prev.adPlatform, cards: prev.adPlatform.cards.filter(c => c.id !== id) } }));
@@ -556,7 +567,6 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
       return {...p, contentSections: n}; 
   });
 
-  // Utility to calculate order total from items if field is missing
   const getOrderTotal = (order: Order) => {
       if (order.totalAmount && order.totalAmount !== 'Calculating...') return order.totalAmount;
       if (!order.items || order.items.length === 0) return '₹ 0';
@@ -843,7 +853,8 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={() => setEditingCard(card)} className="text-blue-600 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors">Edit Details</button>
+                                    <button onClick={() => setEditingCard(card)} className="text-blue-600 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors">Edit</button>
+                                    <button onClick={() => copyAdCard(card)} className="text-gray-600 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-bold transition-colors flex items-center gap-1"><Copy size={14}/> Duplicate</button>
                                     <button onClick={() => deleteAdCard(card.id)} className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={18}/></button>
                                 </div>
                             </div>
