@@ -21,4 +21,5 @@ const Home: React.FC<HomeProps> = ({ onNavigate, onContactClick }) => {
   );
 };
 
+
 export default Home;
