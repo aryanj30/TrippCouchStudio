@@ -5,18 +5,102 @@ import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 import { db } from '../firebase';
 import firebase from 'firebase/compat/app';
-import { 
-  Save, Plus, Trash2, LogOut, Image as ImageIcon, 
-  LayoutDashboard, Layers, BarChart, Megaphone, 
-  Phone, Settings, ChevronRight, X, Edit3, List, Type, 
-  MessageSquare, Search, Send, User, ShoppingBag, 
+import {
+  Save, Plus, Trash2, LogOut, Image as ImageIcon,
+  LayoutDashboard, Layers, BarChart, Megaphone,
+  Phone, Settings, ChevronRight, X, Edit3, List, Type,
+  MessageSquare, Search, Send, User, ShoppingBag,
   ChevronDown, ChevronUp, Box, CheckCircle, Clock, AlertCircle,
-  Users, Calendar, Mail, Copy
+  Users, Calendar, Mail, Copy, Upload, Loader2, Link
 } from 'lucide-react';
 import { 
   SiteData, AdCardData, ServiceItem, Order, 
   Consultation, ChatSession, ChatMessage, ExecutionSection, ContentSection
 } from '../types';
+
+// --- ImgBB Upload ---
+const IMGBB_API_KEY = 'YOUR_IMGBB_API_KEY'; // Replace with your ImgBB API key
+
+const uploadToImgBB = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('image', file);
+  const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+    method: 'POST',
+    body: formData,
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.error?.message || 'Upload failed');
+  return data.data.display_url;
+};
+
+const ImageUploader = ({ value, onChange, label, compact }: { value: string; onChange: (url: string) => void; label?: string; compact?: boolean }) => {
+  const [uploading, setUploading] = React.useState(false);
+  const [mode, setMode] = React.useState<'upload' | 'url'>('upload');
+  const fileRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadToImgBB(file);
+      onChange(url);
+    } catch (err: any) {
+      alert('ImgBB upload failed: ' + (err.message || err));
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  if (compact) {
+    return (
+      <div className="flex-1 flex gap-1 items-center">
+        <input type="file" ref={fileRef} accept="image/*" onChange={handleFile} className="hidden" />
+        <input value={value || ''} onChange={e => onChange(e.target.value)} className="flex-1 p-2 text-xs border rounded" placeholder="Paste URL or upload..." />
+        <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="p-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 disabled:opacity-50 flex-shrink-0" title="Upload image">
+          {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {label && <label className="text-xs font-bold text-gray-400 uppercase">{label}</label>}
+      <div className="flex items-center gap-2 mt-1 mb-1">
+        <button type="button" onClick={() => setMode('upload')} className={`text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${mode === 'upload' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+          <Upload size={12} /> Upload
+        </button>
+        <button type="button" onClick={() => setMode('url')} className={`text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${mode === 'url' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+          <Link size={12} /> Paste URL
+        </button>
+      </div>
+      {mode === 'upload' ? (
+        <div>
+          <input type="file" ref={fileRef} accept="image/*" onChange={handleFile} className="hidden" />
+          <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+            className="w-full border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-all disabled:opacity-50 cursor-pointer">
+            {uploading ? (
+              <div className="flex items-center justify-center gap-2 text-blue-600">
+                <Loader2 size={20} className="animate-spin" /> <span className="text-sm font-medium">Uploading to ImgBB...</span>
+              </div>
+            ) : (
+              <div className="text-gray-400">
+                <Upload size={24} className="mx-auto mb-1" />
+                <span className="text-sm font-medium">Click to upload image</span>
+                <p className="text-xs mt-0.5">JPG, PNG, GIF, WEBP</p>
+              </div>
+            )}
+          </button>
+        </div>
+      ) : (
+        <input value={value || ''} onChange={e => onChange(e.target.value)} className="w-full border p-3 rounded-lg text-sm text-blue-600" placeholder="https://..." />
+      )}
+      {value && <img src={value} className="w-full h-40 object-cover mt-2 rounded-lg bg-gray-100" />}
+    </div>
+  );
+};
 
 // --- Sub-components ---
 
@@ -187,7 +271,7 @@ const EditorModal = ({
                                             <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden flex-shrink-0 border">
                                                 {img && <img src={img} className="w-full h-full object-cover" alt="prev" />}
                                             </div>
-                                            <input value={img || ''} onChange={e => updateGalleryImage(idx, e.target.value)} className="flex-1 p-2 text-xs border rounded" placeholder="https://..." />
+                                            <ImageUploader compact value={img || ''} onChange={v => updateGalleryImage(idx, v)} />
                                             <button onClick={() => removeGalleryImage(idx)} className="text-gray-400 hover:text-red-500"><X size={16}/></button>
                                         </div>
                                     ))}
@@ -733,11 +817,7 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                             <label className="text-xs font-bold text-gray-400 uppercase">Subtitle</label>
                             <input value={formData.hero.subtitle} onChange={e => updateSection('hero', 'subtitle', e.target.value)} className="w-full border p-3 rounded-lg mt-1" />
                         </div>
-                        <div>
-                            <label className="text-xs font-bold text-gray-400 uppercase">Hero Image URL</label>
-                            <input value={formData.hero.imageUrl} onChange={e => updateSection('hero', 'imageUrl', e.target.value)} className="w-full border p-3 rounded-lg mt-1 text-sm text-blue-600" />
-                            {formData.hero.imageUrl && <img src={formData.hero.imageUrl} className="w-full h-40 object-cover mt-2 rounded-lg bg-gray-100" />}
-                        </div>
+                        <ImageUploader label="Hero Image" value={formData.hero.imageUrl} onChange={v => updateSection('hero', 'imageUrl', v)} />
                         <div>
                             <label className="text-xs font-bold text-gray-400 uppercase">CTA Text</label>
                             <input value={formData.hero.ctaText} onChange={e => updateSection('hero', 'ctaText', e.target.value)} className="w-full border p-3 rounded-lg mt-1" placeholder="e.g. Start Project" />
@@ -827,11 +907,7 @@ const AdminDashboard: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                                 <input value={formData.adPlatform.header.categories} onChange={e => updateAdHeader('categories', e.target.value)} className="w-full border p-2 rounded text-sm" />
                             </div>
                             <div className="col-span-2">
-                                <label className="text-xs font-bold text-slate-500">Logo URL</label>
-                                <input value={formData.adPlatform.logoUrl} onChange={e => {
-                                    setFormData(prev => ({...prev, adPlatform: {...prev.adPlatform, logoUrl: e.target.value}}))
-                                }} className="w-full border p-2 rounded text-sm text-blue-600" />
-                                {formData.adPlatform.logoUrl && <img src={formData.adPlatform.logoUrl} className="h-10 mt-2 object-contain border p-1 rounded" alt="logo preview" />}
+                                <ImageUploader label="Logo" value={formData.adPlatform.logoUrl} onChange={v => setFormData(prev => ({...prev, adPlatform: {...prev.adPlatform, logoUrl: v}}))} />
                             </div>
                         </div>
                     </div>
